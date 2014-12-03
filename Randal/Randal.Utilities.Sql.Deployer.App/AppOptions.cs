@@ -27,6 +27,10 @@ namespace Randal.Sql.Deployer.App
 		public bool NoTransaction { get; set; }
 
 		public bool Rollback { get; set; }
+
+		public bool CheckFilesOnly { get; set; }
+
+		public bool BypassCheck { get; set; }
 	}
 
 	public sealed class AppOptionsParser : FluentCommandLineParser<AppOptions>
@@ -59,6 +63,16 @@ namespace Randal.Sql.Deployer.App
 				.As('r', "rollback")
 				.WithDescription(RollbackHelptText)
 				.SetDefault(false);
+
+			Setup(x => x.CheckFilesOnly)
+				.As('c', "checkOnly")
+				.WithDescription(CheckFilesOnlyText)
+				.SetDefault(false);
+
+			Setup(x => x.BypassCheck)
+				.As('b', "bypassCheck")
+				.WithDescription(CheckFilesOnlyText)
+				.SetDefault(false);
 		}
 
 		public const string
@@ -66,7 +80,9 @@ namespace Randal.Sql.Deployer.App
 			ServerHelpText = @"The SQL Server that the project will be deployed against.",
 			LogFolderHelpText = @"Directory where the log file will be written.",
 			NoTransactionHelpText = "Do not use a transaction to execute scripts.",
-			RollbackHelptText = "Rollback the transaction, even if there were no errors."
+			RollbackHelptText = "Rollback the transaction, even if there were no errors.",
+			CheckFilesOnlyText = "Checks the scripts against provided patterns and no scripts will be deployed.  Cannot be used with noTrans.",
+			BypassCheckText = "Bypasses the pattern checker for scripts."
 		;
 	}
 }
