@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ using Randal.Logging;
 namespace Randal.Tests.Logging
 {
 	[TestClass]
-	public sealed class FileLogSettingsTests : BaseUnitTest<FileLogSettingsThens>
+	public sealed class FileLogSettingsTests : UnitTestBase<FileLogSettingsThens>
 	{
 		[TestMethod, DeploymentItem(Test.Paths.LoggingFolder, Test.Paths.LoggingFolder)]
 		public void ShouldHaveFileLoggerWhenCreatingGivenValidValues()
@@ -32,7 +32,7 @@ namespace Randal.Tests.Logging
 
 			When(Creating);
 
-			Then.Settings.Should().NotBeNull().And.BeAssignableTo<IFileLoggerSettings>();
+			Then.Settings.Should().NotBeNull().And.BeAssignableTo<IRollingFileSettings>();
 			Then.Settings.BasePath.Should().Be(Test.Paths.LoggingFolder);
 			Then.Settings.BaseFileName.Should().Be("Test");
 			Then.Settings.FileSize.Should().Be(1024);
@@ -61,18 +61,18 @@ namespace Randal.Tests.Logging
 			When(Creating);
 
 			Then.Settings.BaseFileName.Should().BeEmpty();
-			Then.Settings.FileSize.Should().Be(FileLoggerSettings.FiveMegabytes);
+			Then.Settings.FileSize.Should().Be(RollingFileSettings.FiveMegabytes);
 		}
 
 		protected override void Creating()
 		{
-			Then.Settings = new FileLoggerSettings(Given.BasePath, Given.BaseFileName, Given.FileSize,
+			Then.Settings = new RollingFileSettings(Given.BasePath, Given.BaseFileName, Given.FileSize,
 				Given.TruncateRepeatingLines);
 		}
 	}
 
 	public sealed class FileLogSettingsThens
 	{
-		public FileLoggerSettings Settings;
+		public RollingFileSettings Settings;
 	}
 }

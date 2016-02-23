@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ using Randal.Sql.Scripting;
 namespace Randal.Tests.Sql.Scripting
 {
 	[TestClass]
-	public sealed class ScriptingSourceTests : BaseUnitTest<ScriptingSourceThens>
+	public sealed class ScriptingSourceTests : UnitTestBase<ScriptingSourceThens>
 	{
 		[TestMethod, PositiveTest]
 		public void ShouldHaveInstance_WhenCreating_GivenValidValues()

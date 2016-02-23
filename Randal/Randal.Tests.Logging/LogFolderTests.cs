@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ using Randal.Logging;
 namespace Randal.Tests.Logging
 {
 	[TestClass]
-	public sealed class LogFolderTests : BaseUnitTest<LogFolderThens>
+	public sealed class LogFolderTests : UnitTestBase<LogFolderThens>
 	{
 		protected override void OnSetup()
 		{

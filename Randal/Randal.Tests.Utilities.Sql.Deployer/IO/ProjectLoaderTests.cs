@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -11,6 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
+using System;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Randal.Core.Enums;
@@ -23,7 +24,7 @@ using Randal.Sql.Deployer.Scripts.Blocks;
 namespace Randal.Tests.Sql.Deployer.IO
 {
 	[TestClass, DeploymentItem("TestFiles", "TestFiles")]
-	public sealed class ProjectLoaderTests : BaseUnitTest<ProjectLoaderThens>
+	public sealed class ProjectLoaderTests : UnitTestBase<ProjectLoaderTests.Thens>
 	{
 		protected override void OnSetup()
 		{
@@ -42,21 +43,16 @@ namespace Randal.Tests.Sql.Deployer.IO
 			Given.Parser = parser;
 		}
 
-		protected override void OnTeardown()
-		{
-			Then.Logger.Dispose();
-		}
-
 		[TestMethod, PositiveTest]
-		public void ShouldHaveValuesSetWhenCreatingGivenValidValues()
+		public void ShouldHaveValuesSet_WhenCreating_GivenValidValues()
 		{
 			Given.ProjectPath = @"c:\some folder";
 			When(Creating);
-			Then.Object.ProjectPath.Should().Be(@"c:\some folder");
+			Then.Target.ProjectPath.Should().Be(@"c:\some folder");
 		}
 
 		[TestMethod, NegativeTest]
-		public void ShouldIndicateInvalidPathWhenLoadProjectFromInvalidPath()
+		public void ShouldIndicateInvalidPath_WhenLoading_GivneInvalidPath()
 		{
 			Given.ProjectPath = @"c:\some folder";
 			When(Loading);
@@ -64,7 +60,7 @@ namespace Randal.Tests.Sql.Deployer.IO
 		}
 
 		[TestMethod, NegativeTest]
-		public void ShouldIndicateMissingConfigurationWhenLoadProjectFromWrongFolder()
+		public void ShouldIndicateMissingConfiguration_WhenLoading_GivenWrongFolder()
 		{
 			Given.ProjectPath = @".";
 			When(Loading);
@@ -72,35 +68,72 @@ namespace Randal.Tests.Sql.Deployer.IO
 		}
 
 		[TestMethod, PositiveTest]
-		public void ShouldHaveConfigurationAndSourceFilesWhenLoadingProjectGivenValidFiles()
+		public void ShouldIndicateAmbiguousConfiguration_WhenLoading_GivenMultipleConfigs()
+		{
+			Given.ProjectPath = @".\TestFiles\ProjectB";
+
+			When(Loading);
+
+			Then.Has.Should().Be(Returned.Failure);
+			Then.Has.Should().Be(Returned.Failure, "because there are multiple config files.");
+		}
+
+		[TestMethod, PositiveTest]
+		public void ShouldHaveConfigurationAndSourceFiles_WhenLoading_GivenValidFiles()
 		{
 			Given.ProjectPath = @".\TestFiles\ProjectA";
 
 			When(Loading);
 
 			Then.Has.Should().Be(Returned.Success);
-			Then.Object.Configuration.Should().NotBeNull();
-			Then.Object.Configuration.Project.Should().Be("Conmigo");
-			Then.Object.Configuration.Version.Should().Be("14.12.01.02");
-			Then.Object.AllScripts.Should().HaveCount(3);
+			Then.Target.Configuration.Should().NotBeNull();
+			Then.Target.Configuration.Project.Should().Be("Conmigo");
+			Then.Target.Configuration.Version.Should().Be("14.12.01.02");
+			Then.Target.Configuration.PriorityScripts.Should().HaveCount(1);
+			Then.Target.Configuration.Vars.Should().HaveCount(2);
+			Then.Target.AllScripts.Should().HaveCount(3);
+		}
+
+		[TestMethod, PositiveTest]
+		public void ShouldHaveConfiguration_WhenLoading_GivenValidConfiguration()
+		{
+			Given.ProjectPath = @".\TestFiles\ProjectC";
+
+			When(Loading);
+
+			Then.Has.Should().Be(Returned.Success);
+			Then.Target.Configuration.Should().NotBeNull();
+			Then.Target.Configuration.Project.Should().Be("Conmigo");
+			Then.Target.Configuration.Version.Should().Be("14.12.01.02");
+			Then.Target.Configuration.PriorityScripts.Should().HaveCount(2);
+			Then.Target.Configuration.Vars.Should().HaveCount(2);
 		}
 
 		protected override void Creating()
 		{
-			Then.Logger = new StringLogger();
-			Then.Object = new ProjectLoader(Given.ProjectPath, scriptParser: Given.Parser, logger: Then.Logger);
+			Then.Logger = new Logger();
+			Then.LogSink = new StringLogSink();
+			Then.Logger.AddLogSink(Then.LogSink);
+			Then.Target = new ProjectLoader(Given.ProjectPath, scriptParser: Given.Parser, logger: Then.Logger);
 		}
 
 		private void Loading()
 		{
-			Then.Has = Then.Object.Load();
+			Then.Has = Then.Target.Load();
 		}
-	}
 
-	public sealed class ProjectLoaderThens
-	{
-		public ProjectLoader Object;
-		public Returned Has;
-		public StringLogger Logger;
+		public sealed class Thens : IDisposable
+		{
+			public ProjectLoader Target;
+			public Returned Has;
+			public Logger Logger;
+			public StringLogSink LogSink;
+
+			public void Dispose()
+			{
+				if (Logger != null)
+					Logger.Dispose();
+			}
+		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ using Randal.Sql.Deployer.Configuration;
 namespace Randal.Tests.Sql.Deployer.Configuration
 {
 	[TestClass]
-	public sealed class FilterConfigTests : BaseUnitTest<FilterConfigThens>
+	public sealed class FilterConfigTests : UnitTestBase<FilterConfigThens>
 	{
 		[TestMethod, PositiveTest]
 		public void ShouldHaveEmptyFilter_WhenCreating()
@@ -30,7 +30,7 @@ namespace Randal.Tests.Sql.Deployer.Configuration
 			Then.Target.Should().NotBeNull().And.BeAssignableTo<IValidationFilterConfig>();
 			Then.Target.HaltOn.Should().BeNull();
 			Then.Target.WarnOn.Should().BeNull();
-			}
+		}
 
 		[TestMethod, PositiveTest]
 		public void ShouldHaveFilters_WhenCreating_GivenFilters()

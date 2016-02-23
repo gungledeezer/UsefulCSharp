@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,16 +16,6 @@ using System.IO;
 
 namespace Randal.Logging
 {
-	public interface ILogFile : IDisposable
-	{
-		string FilePath { get; }
-		void Open();
-		LogFileState State { get; }
-		long SizeInBytes { get; }
-		StreamWriter GetStreamWriter();
-		void Close();
-	}
-
 	public sealed class LogFile : ILogFile
 	{
 		public LogFile(string filePath, long sizeInBytes)

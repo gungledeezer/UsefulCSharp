@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@ using Microsoft.SqlServer.Management.Smo;
 
 namespace Randal.Sql.Scripting
 {
-	public static class ClassExtensions
+	public static class DateTimeExtensions
 	{
 		public static string ToVersion(this DateTime date, int iteration)
 		{
@@ -29,23 +29,24 @@ namespace Randal.Sql.Scripting
 			return date.ToString(DateVersionFormat) + iteration.ToString("D2");
 		}
 
+		public const string
+			DateVersionFormat = "yy.MM.dd."
+		;
+	}
+
+	public static class IntegerExtensions
+	{
 		public static string ToVersionToday(this int iteration)
 		{
 			return DateTime.Today.ToVersion(iteration);
 		}
+	}
 
+	public static class ScriptSchemaObjectBaseExtensions
+	{
 		public static string ScriptFileName(this ScriptSchemaObjectBase scriptObject)
 		{
-			if (scriptObject.Schema != "dbo")
-			{
-				return scriptObject.Schema.Replace('\\', '.') + '.' + scriptObject.Name;
-			}
-
-			return scriptObject.Name;
+			return scriptObject.Schema.Replace('\\', '.') + '.' + scriptObject.Name;
 		}
-
-		public const string 
-			DateVersionFormat = "yy.MM.dd."
-		;
 	}
 }

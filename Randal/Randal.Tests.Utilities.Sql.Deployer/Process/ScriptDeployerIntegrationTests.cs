@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ using Randal.Sql.Deployer.Scripts.Blocks;
 namespace Randal.Tests.Sql.Deployer.Process
 {
 	[TestClass, DeploymentItem(Test.Paths.ProjectA, Test.Paths.ProjectA)]
-	public sealed class ScriptDeployerIntegrationTests : BaseUnitTest<ScriptDeployerIntegrationThens>
+	public sealed class ScriptDeployerIntegrationTests : UnitTestBase<ScriptDeployerIntegrationThens>
 	{
 		protected override void OnSetup()
 		{
@@ -42,7 +42,9 @@ namespace Randal.Tests.Sql.Deployer.Process
 
 			Given.Config = config;
 
-			Then.Logger = new StringLogger();
+			Then.Logger = new Logger();
+			Then.LogSink = new StringLogSink();
+			Then.Logger.AddLogSink(Then.LogSink);
 			var manager = new SqlConnectionManager(Given.Config.DatabaseLookup);
 			manager.OpenConnection(".", "model");
 			manager.BeginTransaction();
@@ -95,12 +97,12 @@ namespace Randal.Tests.Sql.Deployer.Process
 			
 			var project = new Project(loader.Configuration, loader.AllScripts);
 
-			Then.Deployer = new ScriptDeployer(config, project, Then.Manager, Then.Logger);
+			Then.Deployer = new SqlServerDeployer(config, project, Then.Manager, Then.Logger);
 		}
 
 		private void CheckingCanUpgrade()
 		{
-			Then.CanUpgrade = Then.Deployer.CanUpgrade();
+			Then.CanUpgrade = Then.Deployer.CanProceed();
 		}
 
 		private void Deploying()
@@ -112,8 +114,9 @@ namespace Randal.Tests.Sql.Deployer.Process
 	public sealed class ScriptDeployerIntegrationThens
 	{
 		public ISqlConnectionManager Manager;
-		public StringLogger Logger;
-		public ScriptDeployer Deployer;
+		public StringLogSink LogSink;
+		public Logger Logger;
+		public SqlServerDeployer Deployer;
 		public Returned DeployReturned;
 		public bool CanUpgrade;
 	}

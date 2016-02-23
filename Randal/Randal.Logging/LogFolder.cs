@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,13 +18,6 @@ using System.Text.RegularExpressions;
 
 namespace Randal.Logging
 {
-	public interface ILogFolder
-	{
-		bool VerifyOrCreate();
-		string GetNextLogFilePath();
-		string GetFallbackFilePath();
-	}
-
 	public sealed class LogFolder : ILogFolder
 	{
 		public LogFolder(string path, string baseLogFileName)

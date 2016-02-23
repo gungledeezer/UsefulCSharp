@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,58 +16,56 @@ using System.IO;
 
 namespace Randal.Logging
 {
-	public interface ILogFileManager : IDisposable
+	public sealed class RollingFileManager : IRollingFileManager
 	{
-		StreamWriter GetStreamWriter();
-		string LogFileName { get; }
-	}
-
-	public sealed class LogFileManager : ILogFileManager
-	{
-		public LogFileManager(IFileLoggerSettings settings, ILogFolder logFolder = null)
+		public RollingFileManager(IRollingFileSettings settings, ILogFolder logFolder = null)
 		{
 			if (settings == null)
 				throw new ArgumentNullException("settings");
 
 			_settings = settings;
 			_logFolder = logFolder ?? new LogFolder(settings.BasePath, settings.BaseFileName);
+			_sync = new object();
 		}
 
 		public StreamWriter GetStreamWriter()
 		{
-			StreamWriter streamWriter = null;
-			var attempts = 0;
-			var lastLogFile = _currentLogFile;
-
-			for (; attempts < MaxAttempts; attempts++)
+			lock (_sync)
 			{
-				_currentLogFile = CreateOrOpenLogFile(_currentLogFile, _logFolder.GetNextLogFilePath);
-				if (_currentLogFile.State == LogFileState.OpenAvailable)
+				StreamWriter streamWriter = null;
+				var attempts = 0;
+				var lastLogFile = _currentLogFile;
+
+				for (; attempts < MaxAttempts; attempts++)
 				{
-					streamWriter = _currentLogFile.GetStreamWriter();
-					break;
+					_currentLogFile = CreateOrOpenLogFile(_currentLogFile, _logFolder.GetNextLogFilePath);
+					if (_currentLogFile.State == LogFileState.OpenAvailable)
+					{
+						streamWriter = _currentLogFile.GetStreamWriter();
+						break;
+					}
+
+					if (lastLogFile != null && lastLogFile != _currentLogFile)
+						CloseLogFile(lastLogFile);
+
+					lastLogFile = _currentLogFile;
+					_currentLogFile = null;
 				}
 
-				if (lastLogFile != null && lastLogFile != _currentLogFile)
-					CloseLogFile(lastLogFile);
+				if (streamWriter == null)
+					throw new InvalidOperationException("Could not obtain a valid log file instance after " + attempts + " attempts.");
 
-				lastLogFile = _currentLogFile;
-				_currentLogFile = null;
-			}
+				if (lastLogFile == null || lastLogFile == _currentLogFile)
+					return streamWriter;
 
-			if (streamWriter == null)
-				throw new InvalidOperationException("Could not obtain a valid log file instance after " + attempts + " attempts.");
+				if (lastLogFile.State == LogFileState.OpenAvailable || lastLogFile.State == LogFileState.OpenExhausted)
+					lastLogFile.GetStreamWriter().WriteLine(CutoverToFormat, Path.GetFileName(_currentLogFile.FilePath));
 
-			if (lastLogFile == null || lastLogFile == _currentLogFile)
+				streamWriter.WriteLine(CutoverFromFormat, Path.GetFileName(lastLogFile.FilePath));
+				CloseLogFile(lastLogFile);
+
 				return streamWriter;
-
-			if (lastLogFile.State == LogFileState.OpenAvailable || lastLogFile.State == LogFileState.OpenExhausted)
-				lastLogFile.GetStreamWriter().WriteLine(CutoverToFormat, Path.GetFileName(_currentLogFile.FilePath));
-
-			streamWriter.WriteLine(CutoverFromFormat, Path.GetFileName(lastLogFile.FilePath));
-			CloseLogFile(lastLogFile);
-
-			return streamWriter;
+			}
 		}
 
 		private static void CloseLogFile(ILogFile logFile)
@@ -95,7 +93,13 @@ namespace Randal.Logging
 
 		public string LogFileName
 		{
-			get { return _currentLogFile == null ? null : _currentLogFile.FilePath; }
+			get
+			{
+				lock (_sync)
+				{
+					return _currentLogFile == null ? null : _currentLogFile.FilePath;
+				}
+			}
 		}
 
 		public void Dispose()
@@ -107,9 +111,10 @@ namespace Randal.Logging
 			_currentLogFile = null;
 		}
 
-		private readonly IFileLoggerSettings _settings;
+		private readonly IRollingFileSettings _settings;
 		private readonly ILogFolder _logFolder;
 		private ILogFile _currentLogFile;
+		private readonly object _sync;
 
 		private const int MaxAttempts = 3;
 

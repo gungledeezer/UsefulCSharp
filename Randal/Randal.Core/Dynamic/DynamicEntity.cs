@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,13 @@ namespace Randal.Core.Dynamic
 		private readonly IDynamicEntityConverter _converter;
 		private readonly MissingMemberBehavior _missingMemberBehavior;
 
-		public DynamicEntity(MissingMemberBehavior missingMemberBehavior = MissingMemberBehavior.ThrowException,
+		public DynamicEntity()
+			: this(MissingMemberBehavior.ThrowException)
+		{
+			
+		}
+
+		public DynamicEntity(MissingMemberBehavior missingMemberBehavior,
 			IDynamicEntityConverter converter = null, IEqualityComparer<string> comparer = null)
 		{
 			_missingMemberBehavior = missingMemberBehavior;

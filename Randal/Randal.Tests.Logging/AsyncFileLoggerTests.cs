@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,9 +12,11 @@
 // GNU General Public License for more details.
 
 using System;
+using System.Fakes;
 using System.IO;
-using System.Threading;
+using System.Linq;
 using FluentAssertions;
+using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Randal.Core.Testing.UnitTest;
 using Randal.Logging;
@@ -23,25 +25,15 @@ using Rhino.Mocks;
 namespace Randal.Tests.Logging
 {
 	[TestClass]
-	public sealed class AsyncFileLoggerTests : BaseUnitTest<AsyncFileLoggerThens>
+	public sealed class AsyncFileLoggerTests : UnitTestBase<AsyncFileLoggerThens>
 	{
 		[TestMethod]
 		public void ShouldHaveFileLogger_WhenCreating()
 		{
 			When(Creating);
 
-			Then.Logger.Should().NotBeNull().And.BeAssignableTo<ILogger>();
+			Then.Logger.Should().NotBeNull().And.BeAssignableTo<ILogSink>();
 			Then.Logger.VerbosityThreshold.Should().Be(Verbosity.All);
-		}
-
-		[TestMethod]
-		public void ShouldChangeValue_WhenSettingVerbosity_GivenNewVerbosityLevel()
-		{
-			Given.Verbosity = Verbosity.Important;
-
-			When(SettingVerbosity);
-
-			Then.Logger.VerbosityThreshold.Should().Be(Verbosity.Important);
 		}
 
 		[TestMethod]
@@ -49,7 +41,7 @@ namespace Randal.Tests.Logging
 		{
 			Given.NullSettings = true;
 
-			ThrowsExceptionWhen(Creating);
+			WhenLastActionDeferred(Creating);
 
 			ThenLastAction.ShouldThrow<ArgumentNullException>();
 		}
@@ -57,11 +49,33 @@ namespace Randal.Tests.Logging
 		[TestMethod]
 		public void ShouldHaveText_WhenLogging_GivenEntries()
 		{
-			Given.Entries = new[] {new LogEntry("Yay for logging.", new DateTime(1891, 3, 15, 4, 30, 00))};
+			Given.Entries = new[] { CreateEntry("Yay for logging.") };
 
 			When(Logging, Disposing);
 
-			Then.Text.Should().Be("910315 043000    Yay for logging.\r\n");
+			Then.Text.Should().Be("151216 000000    Yay for logging.\r\n");
+		}
+
+		[TestMethod]
+		public void ShouldNotHaveText_WhenLogging_GivenLowerVerbosityThanThreshold()
+		{
+			Given.Verbosity = Verbosity.Important;
+			Given.Entries = new[] { new LogEntry("Just informational.") };
+
+			When(Logging, Disposing);
+
+			Then.Text.Should().Be("");
+		}
+
+		[TestMethod]
+		public void ShouldHaveText_WhenLogging_GivenEqualVerbosityToThreshold()
+		{
+			Given.Verbosity = Verbosity.Important;
+			Given.Entries = new[] { CreateEntry("This is important.", Verbosity.Important) };
+
+			When(Logging, Disposing);
+
+			Then.Text.Should().Be("151216 000000    This is important.\r\n");
 		}
 
 		[TestMethod]
@@ -81,15 +95,47 @@ namespace Randal.Tests.Logging
 					"                     Can you hear me now?\r\nATTENTION: The previous line was repeated 2 times.\r\n                     Good\r\n");
 		}
 
+		[TestMethod]
+		public void ShouldHaveTruncatedText_WhenLogging_GivenDuplicateEntries2()
+		{
+			Given.AllowRepeats = false;
+			Given.Entries = Enumerable.Repeat(new LogEntryNoTimestamp(new string('X', 1000)), 100).ToArray();
+
+			When(Logging, Disposing);
+
+			Then.Text.Length.Should().Be(102300);
+		}
+
+		protected override void Creating()
+		{
+			var settings = new RollingFileSettings(Test.Paths.LoggingFolder, "Test", 1024, 
+				Given.AllowRepeats == null || Given.AllowRepeats, null);
+
+			if (GivensDefined("NullSettings") && Given.NullSettings == true)
+				Then.Logger = new RollingFileLogSink(null, verbosity: Given.Verbosity ?? Verbosity.All);
+			else
+				Then.Logger = new RollingFileLogSink(settings, GetMockLogFileManager(), verbosity: Given.Verbosity ?? Verbosity.All);
+		}
+
+		private IRollingFileManager GetMockLogFileManager()
+		{
+			var logFileManager = MockRepository.GenerateMock<IRollingFileManager>();
+
+			Then.Writer = new StreamWriter(new MemoryStream());
+			logFileManager.Stub(x => x.GetStreamWriter()).Return(Then.Writer);
+			return logFileManager;
+		}
+
 		private void Logging()
 		{
 			foreach (ILogEntry entry in Given.Entries)
-				Then.Logger.Add(entry);
-			Thread.Sleep(50);
+				Then.Logger.Post(entry);
 		}
 
 		private void Disposing()
 		{
+			Then.Logger.Dispose();
+
 			Then.Writer.Flush();
 			Then.Writer.BaseStream.Position = 0;
 
@@ -99,40 +145,21 @@ namespace Randal.Tests.Logging
 			}
 
 			Then.Writer = null;
-
-			Then.Logger.Dispose();
 		}
 
-		private void SettingVerbosity()
+		private static ILogEntry CreateEntry(string message, Verbosity verbosity = Verbosity.Info)
 		{
-			Then.Logger.ChangeVerbosityThreshold(Given.Verbosity);
-		}
-
-		protected override void Creating()
-		{
-			var settings = new FileLoggerSettings(Test.Paths.LoggingFolder, "Test", 1024);
-
-			if (GivensDefined("NullSettings") && Given.NullSettings == true)
-				Then.Logger = new AsyncFileLogger(null);
-			else
-				Then.Logger = new AsyncFileLogger(settings, GetMockLogFileManager());
-
-			Thread.Sleep(50);
-		}
-
-		private ILogFileManager GetMockLogFileManager()
-		{
-			var logFileManager = MockRepository.GenerateMock<ILogFileManager>();
-
-			Then.Writer = new StreamWriter(new MemoryStream());
-			logFileManager.Stub(x => x.GetStreamWriter()).Return(Then.Writer);
-			return logFileManager;
+			using (ShimsContext.Create())
+			{
+				ShimDateTime.NowGet = () => new DateTime(2015, 12, 16, 0, 0, 0);
+				return new LogEntry(message, verbosity);
+			}
 		}
 	}
 
 	public sealed class AsyncFileLoggerThens : IDisposable
 	{
-		public AsyncFileLogger Logger;
+		public RollingFileLogSink Logger;
 		public StreamWriter Writer;
 		public string Text;
 

@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ using Randal.Sql.Deployer.Scripts.Blocks;
 namespace Randal.Tests.Sql.Deployer.Scripts
 {
 	[TestClass, DeploymentItem("TestFiles", "TestFiles")]
-	public sealed class ProjectTests : BaseUnitTest<ProjectTestsThens>
+	public sealed class ProjectTests : UnitTestBase<ProjectTestsThens>
 	{
 		protected override void OnSetup()
 		{
@@ -63,7 +63,7 @@ namespace Randal.Tests.Sql.Deployer.Scripts
 		public void ShouldThrowExceptionWhenCreatingGivenNullConfiguration()
 		{
 			Given.Configuration = null;
-			ThrowsExceptionWhen(Creating);
+			WhenLastActionDeferred(Creating);
 
 			ThenLastAction.ShouldThrow<ArgumentNullException>();
 		}
@@ -72,7 +72,7 @@ namespace Randal.Tests.Sql.Deployer.Scripts
 		public void ShouldThrowExceptionWhenCreatingGivenNullScripts()
 		{
 			Given.Scripts = null;
-			ThrowsExceptionWhen(Creating);
+			WhenLastActionDeferred(Creating);
 
 			ThenLastAction.ShouldThrow<ArgumentNullException>();
 		}
@@ -80,10 +80,10 @@ namespace Randal.Tests.Sql.Deployer.Scripts
 		[TestMethod, NegativeTest]
 		public void ShouldThrowExceptionWhenCreatingInstanceGivenMissingScriptForPriorityList()
 		{
-			Given.Configuration = new ProjectConfig("Test", "14.06.08.01", new[] {"ScriptA"});
+			Given.Configuration = new ProjectConfigJson("Test", "14.06.08.01", new[] {"ScriptA"});
 			Given.Scripts = new List<SourceScript>();
 
-			ThrowsExceptionWhen(Creating);
+			WhenLastActionDeferred(Creating);
 
 			ThenLastAction.ShouldThrow<InvalidOperationException>();
 		}

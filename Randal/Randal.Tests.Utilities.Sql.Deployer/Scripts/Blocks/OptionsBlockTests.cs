@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ using Randal.Sql.Deployer.Scripts.Blocks;
 namespace Randal.Tests.Sql.Deployer.Scripts.Blocks
 {
 	[TestClass]
-	public sealed class OptionsBlockTests : BaseUnitTest<OptionsBlockThens>
+	public sealed class OptionsBlockTests : UnitTestBase<OptionsBlockThens>
 	{
 		[TestMethod, PositiveTest]
 		public void ShouldHaveTimeoutBlockWhenCreaatingInstance()

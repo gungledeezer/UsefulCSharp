@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{02DDD4EC-A098-4C73-BC88-EC7607C8E5E3}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Randal.Sql.Deployer.App</RootNamespace>
+    <AssemblyName>Randal.Sql.Deployer.App</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Randal.Sql.Deployer.App.SqlDeployerProgram</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FluentCommandLineParser, Version=1.4.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentCommandLineParser.1.4.3\lib\net35\FluentCommandLineParser.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Randal.Core, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Randal.Core.1.0.3\lib\net45\Randal.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Randal.Logging, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Randal.Logging.2.2.0\lib\net45\Randal.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Channels" />
+    <Reference Include="System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Tpl.Dataflow.4.5.24\lib\portable-net45+win8+wpa81\System.Threading.Tasks.Dataflow.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Randal.Sql.Deployer\Properties\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="AppOptions.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runner.cs" />
+    <Compile Include="RunnerException.cs" />
+    <Compile Include="RunnerResolution.cs" />
+    <Compile Include="RunnerSettings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Scripts\Core\Sprocs\coreCreateTrigger.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreCreateFunction.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreCreateInlineTableFunction.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreCreateMultiStatementFunction.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreCreateProcedure.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreCreateQueryView.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreCreateScalarFunction.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreCreateSchema.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreCreateTableType.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreCreateView.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreDropFunction.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreDropIndex.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreDropProcedure.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreDropTableType.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreDropView.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreFormat.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreGetColumnDefinitions.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreNextArg.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreNextSqlToken.sql" />
+    <Content Include="Scripts\Core\Sprocs\corePopulateTable.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreRefreshModulesUsedByTableType.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreRemoveParameter.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreRenameTableType.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreSetParameter.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreSetTableIndex.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreSetTableVersion.sql" />
+    <Content Include="Scripts\Core\Sprocs\coreSpaceDetails.sql" />
+    <Content Include="Scripts\Core\Sprocs\viewsFor.sql" />
+    <Content Include="Scripts\Core\Tables\CoreParameters.sql" />
+    <Content Include="Scripts\Core\UDFs\coreCapitalize.sql" />
+    <Content Include="Scripts\Core\UDFs\coreCompareDate.sql" />
+    <Content Include="Scripts\Core\UDFs\coreCompareDateTime.sql" />
+    <Content Include="Scripts\Core\UDFs\coreDataTypeName.sql" />
+    <Content Include="Scripts\Core\UDFs\coreDateBetween.sql" />
+    <Content Include="Scripts\Core\UDFs\coreDateToMonthDay.sql" />
+    <Content Include="Scripts\Core\UDFs\coreDayOfMonth.sql" />
+    <Content Include="Scripts\Core\UDFs\coreEscape.sql" />
+    <Content Include="Scripts\Core\UDFs\coreFkCascading.sql" />
+    <Content Include="Scripts\Core\UDFs\coreFkParentColumns.sql" />
+    <Content Include="Scripts\Core\UDFs\coreFkReferenceColumns.sql" />
+    <Content Include="Scripts\Core\UDFs\coreGetIndexColumns.sql" />
+    <Content Include="Scripts\Core\UDFs\coreGetParameter.sql" />
+    <Content Include="Scripts\Core\UDFs\coreGetParameterString.sql" />
+    <Content Include="Scripts\Core\UDFs\coreGetTableVersion.sql" />
+    <Content Include="Scripts\Core\UDFs\coreGetViewsFor.sql" />
+    <Content Include="Scripts\Core\UDFs\coreIncrStr.sql" />
+    <Content Include="Scripts\Core\UDFs\coreIxColumns.sql" />
+    <Content Include="Scripts\Core\UDFs\coreIxType.sql" />
+    <Content Include="Scripts\Core\UDFs\coreIxXmlSecondary.sql" />
+    <Content Include="Scripts\Core\UDFs\coreLevenshtein.sql" />
+    <Content Include="Scripts\Core\UDFs\coreLiteral.sql" />
+    <Content Include="Scripts\Core\UDFs\corePivotDelimitedList.sql" />
+    <Content Include="Scripts\Core\UDFs\coreRemoveQuotes.sql" />
+    <Content Include="Scripts\Core\UDFs\coreRightJustify.sql" />
+    <Content Include="Scripts\Core\UDFs\coreSetTime.sql" />
+    <Content Include="Scripts\Core\UDFs\coreTableColumnDefinition.sql" />
+    <Content Include="Scripts\Core\UDFs\coreTableExists.sql" />
+    <Content Include="Scripts\Core\UDFs\coreToLocalTime.sql" />
+    <Content Include="Scripts\Core\UDFs\coreTrim.sql" />
+    <Content Include="Scripts\Core\UDFs\coreTrimBrackets.sql" />
+    <Content Include="Scripts\Core\UDFs\coreTypeDef.sql" />
+    <Content Include="Scripts\Core\UDFs\coreTypeDefault.sql" />
+    <Content Include="Scripts\Core\UDFs\coreTypeSize.sql" />
+    <Content Include="Scripts\Core\UDFs\coreVersionFromDate.sql" />
+    <Content Include="Scripts\Core\UDFs\coreVersionNow.sql" />
+    <Content Include="Scripts\Core\UDFs\coreViewColumnDefinition.sql" />
+    <Content Include="Scripts\Core\Views\CoreCheckConstraints.sql" />
+    <Content Include="Scripts\Core\Views\CoreColumnDefinitions.sql" />
+    <Content Include="Scripts\Core\Views\CoreComputedColumns.sql" />
+    <Content Include="Scripts\Core\Views\CoreFKs.sql" />
+    <Content Include="Scripts\Core\Views\CoreForeignKeys.sql" />
+    <Content Include="Scripts\Core\Views\CoreIndexes.sql" />
+    <Content Include="Scripts\Core\Views\CoreIXs.sql" />
+    <Content Include="Scripts\Core\Views\CoreSchemaDependencies.sql" />
+    <Content Include="Scripts\Core\Views\CoreSprocStats.sql" />
+    <Content Include="Scripts\Core\Views\CoreTableColumnsView.sql" />
+    <Content Include="Scripts\Core\Views\CoreTableSizes.sql" />
+    <Content Include="Scripts\Core\Views\CoreTableVersions.sql" />
+    <None Include="App.config" />
+    <Content Include="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="LICENSE" />
+    <None Include="packages.config" />
+    <None Include="readme.md" />
+    <None Include="Scripts\Core\config.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Randal.Sql.Deployer.Shared\Randal.Sql.Deployer.Shared.csproj">
+      <Project>{c38bbdbb-41f8-4a29-ac44-bdf309ec0979}</Project>
+      <Name>Randal.Sql.Deployer.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Randal.Sql.Deployer\Randal.Sql.Deployer.csproj">
+      <Project>{b910a326-38ad-4dc4-999c-03b3b1ce3d77}</Project>
+      <Name>Randal.Sql.Deployer</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

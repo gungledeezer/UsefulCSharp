@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B910A326-38AD-4DC4-999C-03B3B1CE3D77}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Randal.Sql.Deployer</RootNamespace>
+    <AssemblyName>Randal.Sql.Deployer</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Randal.Core, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Randal.Core.1.0.3\lib\net45\Randal.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Randal.Logging, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Randal.Logging.2.2.0\lib\net45\Randal.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Sprache, Version=2.0.0.50, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sprache.2.0.0.50\lib\portable-net4+netcore45+win8+wp8+sl5+MonoAndroid+Xamarin.iOS10+MonoTouch\Sprache.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Tpl.Dataflow.4.5.24\lib\portable-net45+win8+wpa81\System.Threading.Tasks.Dataflow.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\IProjectConfig.cs" />
+    <Compile Include="Configuration\ProjectConfigJson.cs" />
+    <Compile Include="Configuration\ProjectConfigXml.cs" />
+    <Compile Include="Configuration\ValidationFilterConfig.cs" />
+    <Compile Include="Configuration\ProjectsTableConfig.cs" />
+    <Compile Include="Configuration\ScriptDeployerConfig.cs" />
+    <Compile Include="Configuration\ProjectConfigBase.cs" />
+    <Compile Include="Configuration\Var.cs" />
+    <Compile Include="Helpers\CatalogPatternLookup.cs" />
+    <Compile Include="IO\ProjectLoader.cs" />
+    <Compile Include="Process\IScriptDeployer.cs" />
+    <Compile Include="Process\ScriptDeployerBase.cs" />
+    <Compile Include="Process\SqlCommandWrapper.cs" />
+    <Compile Include="Process\SqlCommandWrapperFactory.cs" />
+    <Compile Include="Process\SqlConnectionManager.cs" />
+    <Compile Include="Process\ScriptFileDeployery.cs" />
+    <Compile Include="Properties\SharedAssemblyInfo.cs" />
+    <Compile Include="Scripts\Blocks\BaseScriptBlock.cs" />
+    <Compile Include="Scripts\Blocks\CatalogBlock.cs" />
+    <Compile Include="Scripts\Blocks\OptionsBlock.cs" />
+    <Compile Include="Scripts\Blocks\CsvParameterBlock.cs" />
+    <Compile Include="Scripts\Blocks\IgnoreScriptBlock.cs" />
+    <Compile Include="Scripts\Blocks\NeedBlock.cs" />
+    <Compile Include="Scripts\IProject.cs" />
+    <Compile Include="Scripts\IScriptChecker.cs" />
+    <Compile Include="Scripts\IScriptCheckerConsumer.cs" />
+    <Compile Include="Scripts\IScriptParser.cs" />
+    <Compile Include="Scripts\IScriptParserConsumer.cs" />
+    <Compile Include="Scripts\Project.cs" />
+    <Compile Include="Scripts\ScriptCheck.cs" />
+    <Compile Include="Scripts\ScriptChecker.cs" />
+    <Compile Include="Scripts\ScriptConstants.cs" />
+    <Compile Include="Scripts\ScriptParser.cs" />
+    <Compile Include="Scripts\ScriptSettings.cs" />
+    <Compile Include="Scripts\SqlScriptPhase.cs" />
+    <Compile Include="Scripts\SourceScript.cs" />
+    <Compile Include="Scripts\Blocks\SqlCommandBlock.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scripts\Blocks\UnexpectedBlock.cs" />
+    <Compile Include="Process\SqlServerDeployer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LICENSE" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

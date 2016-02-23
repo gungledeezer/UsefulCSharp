@@ -1,5 +1,5 @@
-﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Useful C#
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,13 +12,14 @@
 // GNU General Public License for more details.
 
 using System;
+using System.Threading.Tasks;
 
 namespace Randal.Logging
 {
-	public interface ILogger : IDisposable
+	public interface ILogger : ILoggerSync, ILoggerAsync
 	{
-		Verbosity VerbosityThreshold { get; }
-		void ChangeVerbosityThreshold(Verbosity newLevel);
-		void Add(ILogEntry entry);
+		void AddLogSink(ILogSink logSink);
+
+		Task CompleteAllAsync(int attemptsToComplete = 3, TimeSpan? delayBetweenAttempts = null);
 	}
 }

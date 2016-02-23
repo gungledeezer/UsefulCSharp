@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ using Randal.Sql.Deployer.Process;
 namespace Randal.Tests.Sql.Deployer.Process
 {
 	[TestClass]
-	public sealed class SqlCommandWrapperFactoryTests : BaseUnitTest<SqlCommandWrapperFactoryThens>
+	public sealed class SqlCommandWrapperFactoryTests : UnitTestBase<SqlCommandWrapperFactoryThens>
 	{
 		[TestMethod, PositiveTest]
 		public void ShouldHaveValidFactoryWhenCreating()

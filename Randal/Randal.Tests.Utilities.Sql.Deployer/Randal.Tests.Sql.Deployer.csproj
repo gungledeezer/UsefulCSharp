@@ -54,32 +54,40 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FluentAssertions, Version=3.2.1.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\FluentAssertions.3.2.1\lib\net45\FluentAssertions.dll</HintPath>
+    <Reference Include="FluentAssertions, Version=4.1.1.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentAssertions.4.1.1\lib\net45\FluentAssertions.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="FluentAssertions.Core, Version=3.2.1.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\FluentAssertions.3.2.1\lib\net45\FluentAssertions.Core.dll</HintPath>
+    <Reference Include="FluentAssertions.Core, Version=4.1.1.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentAssertions.4.1.1\lib\net45\FluentAssertions.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Randal.Core.Testing, Version=1.0.0.9, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Randal.Core.Testing.1.0.0.9\lib\net45\Randal.Core.Testing.dll</HintPath>
+    <Reference Include="Randal.Core, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Randal.Core.1.0.3\lib\net45\Randal.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Randal.Logging, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Randal.Logging.1.0.0.4\lib\net45\Randal.Logging.dll</HintPath>
+    <Reference Include="Randal.Core.Testing, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Randal.Core.Testing.2.0.2\lib\net45\Randal.Core.Testing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Randal.Logging, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Randal.Logging.2.2.0\lib\net45\Randal.Logging.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Rhino.Mocks">
       <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Tpl.Dataflow.4.5.24\lib\portable-net45+win8+wpa81\System.Threading.Tasks.Dataflow.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -96,7 +104,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Configuration\InstallerConfigTests.cs" />
+    <Compile Include="Configuration\FilterTests.cs" />
+    <Compile Include="Configuration\ProjectConfigTests.cs" />
     <Compile Include="Configuration\FilterConfigTests.cs" />
     <Compile Include="Helpers\CatalogPatternLookupTests.cs" />
     <Compile Include="IO\ProjectLoaderTests.cs" />
@@ -128,21 +137,25 @@
     <Compile Include="Test.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="_Samples\T4\EnumsFromDatabase.tt.txt" />
     <None Include="LICENSE" />
     <None Include="packages.config" />
+    <None Include="TestFiles\config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="TestFiles\ProjectA\config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Randal.Core\Randal.Core.csproj">
-      <Project>{fb6276e2-09a0-419e-8346-280297ff6c69}</Project>
-      <Name>Randal.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Randal.Utilities.Sql.Deployer\Randal.Sql.Deployer.csproj">
-      <Project>{b910a326-38ad-4dc4-999c-03b3b1ce3d77}</Project>
-      <Name>Randal.Sql.Deployer</Name>
-    </ProjectReference>
+    <Content Include="TestFiles\ProjectB\config.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="TestFiles\ProjectB\config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Include="TestFiles\ProjectC\config.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestFiles\ProjectA\ScriptC.sql">
@@ -161,6 +174,12 @@
       <LastGenOutput>TestScripts.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Randal.Sql.Deployer\Randal.Sql.Deployer.csproj">
+      <Project>{b910a326-38ad-4dc4-999c-03b3b1ce3d77}</Project>
+      <Name>Randal.Sql.Deployer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

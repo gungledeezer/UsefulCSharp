@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ using Randal.Logging;
 namespace Randal.Tests.Logging
 {
 	[TestClass]
-	public sealed class NullLoggerTests : BaseUnitTest<NullLoggerThens>
+	public sealed class NullLoggerTests : UnitTestBase<NullLoggerThens>
 	{
 		protected override void OnTeardown()
 		{
@@ -32,7 +32,7 @@ namespace Randal.Tests.Logging
 		{
 			When(Creating);
 
-			Then.Log.Should().NotBeNull().And.BeAssignableTo<ILogger>();
+			Then.Log.Should().NotBeNull().And.BeAssignableTo<ILogSink>();
 			Then.Log.VerbosityThreshold.Should().Be(Verbosity.All);
 		}
 
@@ -59,17 +59,17 @@ namespace Randal.Tests.Logging
 
 		private void AddingLogEntry()
 		{
-			Then.Log.Add(Given.Entry);
+			Then.Log.Post(Given.Entry);
 		}
 
 		protected override void Creating()
 		{
-			Then.Log = new NullLogger();
+			Then.Log = new NullLogSink();
 		}
 	}
 
 	public sealed class NullLoggerThens
 	{
-		public NullLogger Log;
+		public NullLogSink Log;
 	}
 }

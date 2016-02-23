@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,14 @@ using Rhino.Mocks;
 namespace Randal.Tests.Logging
 {
 	[TestClass]
-	public sealed class TextWriterLoggerTests : BaseUnitTest<TextWriterLoggerThens>
+	public sealed class TextWriterLoggerTests : UnitTestBase<TextWriterLoggerThens>
 	{
 		[TestMethod]
 		public void ShouldHaveTextWriterLoggerWhenCreatingInstanceGivenConsoleOut()
 		{
 			Given.Stream = Console.Out;
 			When(Creating);
-			Then.Logger.Should().NotBeNull().And.BeAssignableTo<ILogger>();
+			Then.Logger.Should().NotBeNull().And.BeAssignableTo<ILogSink>();
 		}
 
 		[TestMethod]
@@ -43,18 +43,18 @@ namespace Randal.Tests.Logging
 		protected override void Creating()
 		{
 			Then.Writer = Given.Stream ?? MockRepository.GenerateMock<TextWriter>();
-			Then.Logger = new TextWriterLogger(Then.Writer);
+			Then.Logger = new TextWriterLogSink(Then.Writer);
 		}
 
 		private void Writing()
 		{
-			Then.Logger.Add(Given.Entry);
+			Then.Logger.Post(Given.Entry);
 		}
 	}
 
 	public sealed class TextWriterLoggerThens
 	{
-		public TextWriterLogger Logger;
+		public TextWriterLogSink Logger;
 		public TextWriter Writer;
 	}
 }

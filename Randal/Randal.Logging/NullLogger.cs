@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -11,25 +11,67 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
+using System;
+using System.Threading.Tasks;
+
 namespace Randal.Logging
 {
 	public sealed class NullLogger : ILogger
 	{
-		public Verbosity VerbosityThreshold
+		public void AddLogSink(ILogSink logSink) { }
+
+		public Task CompleteAllAsync(int attemptsToComplete = 3, TimeSpan? delayBetweenAttempts = null)
 		{
-			get { return Verbosity.All; }
+			return Task.FromResult(false);
 		}
 
-		public void ChangeVerbosityThreshold(Verbosity newLevel)
+		public Task PostEntryAsync(string message, params object[] values)
 		{
+			return Task.FromResult(false);
 		}
 
-		public void Add(ILogEntry entry)
+		public void PostEntry(string message, params object[] values) { }
+
+		public Task PostEntryAsync(Verbosity verbosity, string message, params object[] values)
 		{
+			return Task.FromResult(false);
 		}
 
-		public void Dispose()
+		public void PostEntry(Verbosity verbosity, string message, params object[] values) { }
+
+		public Task PostBlankAsync(Verbosity verbosity = Verbosity.Info)
 		{
+			return Task.FromResult(false);
 		}
+
+		public void PostBlank(Verbosity verbosity = Verbosity.Info) { }
+
+		public Task PostEntryNoTimestampAsync(string message, params object[] values)
+		{
+			return Task.FromResult(false);
+		}
+
+		public void PostEntryNoTimestamp(string message, params object[] values) { }
+
+		public Task PostEntryNoTimestampAsync(Verbosity verbosity, string message, params object[] values)
+		{
+			return Task.FromResult(false);
+		}
+
+		public void PostEntryNoTimestamp(Verbosity verbosity, string message, params object[] values) { }
+
+		public Task PostExceptionAsync(Exception ex)
+		{
+			return Task.FromResult(false);
+		}
+
+		public void PostException(Exception ex) { }
+
+		public Task PostExceptionAsync(Exception ex, string message, params object[] values)
+		{
+			return Task.FromResult(false);
+		}
+
+		public void PostException(Exception ex, string message, params object[] values) { }
 	}
 }

@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,29 +21,13 @@ using Randal.Logging;
 namespace Randal.Tests.Logging
 {
 	[TestClass, DeploymentItem(Test.Paths.LoggingFolder, Test.Paths.LoggingFolder)]
-	public sealed class LogFileManagerTests : BaseUnitTest<LogFileManagerThens>
+	public sealed class LogFileManagerTests : UnitTestBase<LogFileManagerTests.Thens>
 	{
-		protected override void OnSetup()
-		{
-			Given.Size = 1024;
-			Given.NullSettings = false;
-		}
-
-		protected override void OnTeardown()
-		{
-			if (Then.Manager == null)
-				return;
-
-			Then.Manager.Dispose();
-			Then.Writer = null;
-			Then.Manager = null;
-		}
-
 		[TestMethod, NegativeTest]
 		public void ShouldThrowExceptionWhenCreatingGivenNullSettings()
 		{
 			Given.NullSettings = true;
-			ThrowsExceptionWhen(Creating);
+			WhenLastActionDeferred(Creating);
 			ThenLastAction.ShouldThrow<ArgumentNullException>();
 		}
 
@@ -52,7 +36,7 @@ namespace Randal.Tests.Logging
 		{
 			When(Creating);
 
-			Then.Manager.Should().NotBeNull().And.BeAssignableTo<ILogFileManager>();
+			Then.Manager.Should().NotBeNull().And.BeAssignableTo<IRollingFileManager>();
 			Then.Manager.LogFileName.Should().BeNull();
 		}
 
@@ -88,22 +72,43 @@ namespace Randal.Tests.Logging
 			if (Then.Manager != null)
 				return;
 
-			IFileLoggerSettings settings = null;
+			IRollingFileSettings settings = null;
 			if (Given.NullSettings == false)
-				settings = new FileLoggerSettings(Test.Paths.LoggingFolder, "LFMT", Given.Size, false);
+				settings = new RollingFileSettings(Test.Paths.LoggingFolder, "LFMT", Given.Size, false);
 
-			Then.Manager = new LogFileManager(settings);
+			Then.Manager = new RollingFileManager(settings);
 		}
 
 		private void WritingText()
 		{
 			Then.Writer.WriteLine(Given.TextToWrite);
 		}
-	}
 
-	public sealed class LogFileManagerThens
-	{
-		public LogFileManager Manager;
-		public StreamWriter Writer;
+		protected override void OnSetup()
+		{
+			Given.Size = 1024;
+			Given.NullSettings = false;
+		}
+
+		protected override void OnTeardown()
+		{
+			if (Then.Manager == null)
+				return;
+
+			var fileName = Then.Manager.LogFileName;
+
+			Then.Manager.Dispose();
+			Then.Writer = null;
+			Then.Manager = null;
+
+			if (File.Exists(fileName))
+				File.Delete(fileName);
+		}
+
+		public sealed class Thens
+		{
+			public RollingFileManager Manager;
+			public StreamWriter Writer;
+		}
 	}
 }

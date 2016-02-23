@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,36 +15,24 @@ using System;
 
 namespace Randal.Logging
 {
-	public interface ILogEntry
+	public struct LogEntry : ILogEntry
 	{
-		bool ShowTimestamp { get; }
-		DateTime Timestamp { get; }
-		string Message { get; }
-		Verbosity VerbosityLevel { get; }
-	}
-
-	public class LogEntry : ILogEntry
-	{
-		public LogEntry(string message, Verbosity verbosity = Verbosity.Info) : this(message, DateTime.Now, verbosity)
-		{
-		}
-
-		public LogEntry(string message, DateTime timestamp, Verbosity verbosity = Verbosity.Info)
+		public LogEntry(string message, Verbosity verbosity = Verbosity.Info) : this()
 		{
 			VerbosityLevel = verbosity;
-			Timestamp = timestamp;
+			Timestamp = DateTime.Now;
 			Message = message ?? string.Empty;
 		}
 
-		public Verbosity VerbosityLevel { get; protected set; }
+		public Verbosity VerbosityLevel { get; private set; }
 
-		public virtual bool ShowTimestamp
+		public bool ShowTimestamp
 		{
 			get { return true; }
 		}
 
-		public string Message { get; protected set; }
+		public string Message { get; private set; }
 
-		public DateTime Timestamp { get; protected set; }
+		public DateTime Timestamp { get; private set; }
 	}
 }

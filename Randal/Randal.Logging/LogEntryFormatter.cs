@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,17 +27,17 @@ namespace Randal.Logging
 	{
 		public string Format(ILogEntry entry)
 		{
-			var exEntry = entry as LogExceptionEntry;
-
-			if (exEntry != null)
-				return FormatException(exEntry);
+			if (entry is LogExceptionEntry)
+			{
+				return FormatException((LogExceptionEntry)entry);
+			}
 
 			return string.Concat(
 				entry.ShowTimestamp ? entry.Timestamp.ToString(TextResources.Timestamp) : TextResources.NoTimestamp,
 				TextResources.Prepend,
 				entry.Message,
 				Environment.NewLine
-				);
+			);
 		}
 
 		private static string FormatException(LogExceptionEntry entry)

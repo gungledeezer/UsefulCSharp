@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,6 +12,7 @@
 // GNU General Public License for more details.
 
 using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Randal.Core.Testing.UnitTest;
@@ -25,7 +26,7 @@ using Rhino.Mocks;
 namespace Randal.Tests.Sql.Deployer.Process
 {
 	[TestClass]
-	public sealed class ScriptDeployerTests : BaseUnitTest<SqlDeployerThens>
+	public sealed class ScriptDeployerTests : UnitTestBase<ScriptDeployerTests.Thens>
 	{
 		protected override void OnSetup()
 		{
@@ -51,7 +52,7 @@ namespace Randal.Tests.Sql.Deployer.Process
 		public void ShouldThrowExceptionWhenCreatingInstanceGivenNullProject()
 		{
 			Given.Project = null;
-			ThrowsExceptionWhen(Creating);
+			WhenLastActionDeferred(Creating);
 			ThenLastAction.ShouldThrow<ArgumentNullException>();
 		}
 
@@ -59,30 +60,33 @@ namespace Randal.Tests.Sql.Deployer.Process
 		public void ShouldThrowExceptionWhenCreatingInstanceGivenNullConnectionManager()
 		{
 			Given.ConnectionManager = null;
-			ThrowsExceptionWhen(Creating);
+			WhenLastActionDeferred(Creating);
 			ThenLastAction.ShouldThrow<ArgumentNullException>();
 		}
 
 		[TestMethod, PositiveTest]
 		public void ShouldCallExecuteWhenDeployingScripts()
 		{
+			var messages = new List<string>();
 			Given.Project = (Project) new ProjectBuilder()
 				.WithConfiguration("Test", "01.01.01.01")
 				.WithScript(
-					(SourceScript) new ScriptBuilder("A")
+					new ScriptBuilder("A")
 						.WithCatalogs("master")
 						.WithMainBlock("Select 1")
+						.Build(messages)
 				);
 
 			When(Deploying);
 
+			messages.Should().HaveCount(0);
 			Then.Manager.AssertWasCalled(x => x.CreateCommand(Arg<string>.Is.Anything, Arg<object[]>.Is.Anything));
 		}
 
 		protected override void Creating()
 		{
 			var config = Given.Config ?? new ScriptDeployerConfig();
-			Then.Deployer = new ScriptDeployer(config, Given.Project, Given.ConnectionManager, new StringLogger());
+			Then.Deployer = new SqlServerDeployer(config, Given.Project, Given.ConnectionManager, new NullLogger());
 			Then.Manager = Given.ConnectionManager;
 		}
 
@@ -90,11 +94,11 @@ namespace Randal.Tests.Sql.Deployer.Process
 		{
 			Then.Deployer.DeployScripts();
 		}
-	}
 
-	public sealed class SqlDeployerThens
-	{
-		public ScriptDeployer Deployer;
-		public ISqlConnectionManager Manager;
+		public sealed class Thens
+		{
+			public SqlServerDeployer Deployer;
+			public ISqlConnectionManager Manager;
+		}
 	}
 }

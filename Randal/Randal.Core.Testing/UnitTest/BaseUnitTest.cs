@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,12 +13,13 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Randal.Core.Dynamic;
 
 namespace Randal.Core.Testing.UnitTest
 {
-	[TestClass]
+	[TestClass, Obsolete("Use UnitTestBase<TThens> or UnitTestBase<TThens, TGivens>.")]
 	public abstract class BaseUnitTest<TThens> where TThens : class, new()
 	{
 		[TestInitialize]
@@ -64,10 +65,7 @@ namespace Randal.Core.Testing.UnitTest
 		/// <returns>True if all properties specified are defined, otherwise False.</returns>
 		protected bool GivensDefined(params string[] members)
 		{
-			if (members.Length == 0)
-				return true;
-
-			return members.All(member => Given.TestForMember(member));
+			return members.Length == 0 || members.All(member => Given.TestForMember(member));
 		}
 
 		/// <summary>
@@ -91,6 +89,11 @@ namespace Randal.Core.Testing.UnitTest
 		/// <param name="actions"></param>
 		protected void ThrowsExceptionWhen(params Action[] actions)
 		{
+			DeferLastActionWhen(actions);
+		}
+
+		protected void DeferLastActionWhen(params Action[] actions)
+		{
 			var listOfActions = actions.ToList();
 
 			if (actions.Any(a => a == Creating) == false)
@@ -102,9 +105,27 @@ namespace Randal.Core.Testing.UnitTest
 			ThenLastAction = listOfActions.Last();
 		}
 
+		protected Action Repeat(Action action, int repeatX)
+		{
+			if (repeatX < 1)
+				repeatX = 1;
+
+			return () =>
+			{
+				for (var n = 0; n < repeatX; n++)
+					action();
+			};
+		}
+
+		protected Action Await(Func<Task> asyncFunc)
+		{
+			return () => asyncFunc().GetAwaiter().GetResult();
+		}
+
 		protected abstract void Creating();
 
 		protected TThens Then;
+
 		protected Action ThenLastAction { get; private set; }
 	}
 }

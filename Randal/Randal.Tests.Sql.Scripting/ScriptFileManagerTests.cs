@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ using Randal.Sql.Scripting;
 namespace Randal.Tests.Sql.Scripting
 {
 	[TestClass]
-	public sealed class ScriptFileManagerTests : BaseUnitTest<ScriptFileManagerThens>
+	public sealed class ScriptFileManagerTests : UnitTestBase<ScriptFileManagerThens>
 	{
 		[TestMethod, PositiveTest]
 		public void ShouldHaveDirectory_WhenCreatingDirectory()

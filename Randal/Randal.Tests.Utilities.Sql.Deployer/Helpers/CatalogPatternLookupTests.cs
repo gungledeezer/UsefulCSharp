@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ using Randal.Sql.Deployer.Helpers;
 namespace Randal.Tests.Sql.Deployer.Helpers
 {
 	[TestClass]
-	public sealed class CatalogPatternLookupTests : BaseUnitTest<CatalogPatternLookupThens>
+	public sealed class CatalogPatternLookupTests : UnitTestBase<CatalogPatternLookupThens>
 	{
 		[TestMethod, PositiveTest]
 		public void ShouldHaveEmptyLookup_WhenCreatingInstance()

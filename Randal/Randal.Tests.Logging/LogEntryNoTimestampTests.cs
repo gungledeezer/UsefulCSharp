@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -11,7 +11,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-using System;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Randal.Core.Testing.UnitTest;
@@ -20,7 +19,7 @@ using Randal.Logging;
 namespace Randal.Tests.Logging
 {
 	[TestClass]
-	public sealed class LogEntryNoTimestampTests : BaseUnitTest<LogEntryNoTimestampThens>
+	public sealed class LogEntryNoTimestampTests : UnitTestBase<LogEntryNoTimestampThens>
 	{
 		[TestMethod]
 		public void ShouldHaveValidLogEntryWhenCreating()
@@ -29,7 +28,6 @@ namespace Randal.Tests.Logging
 
 			Then.Entry.Should().NotBeNull().And.BeAssignableTo<ILogEntry>();
 			Then.Entry.ShowTimestamp.Should().BeFalse();
-			Then.Entry.Timestamp.Should().Be(DateTime.MinValue);
 		}
 
 		[TestMethod]

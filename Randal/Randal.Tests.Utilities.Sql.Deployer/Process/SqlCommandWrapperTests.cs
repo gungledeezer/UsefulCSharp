@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ using Randal.Sql.Deployer.Process;
 namespace Randal.Tests.Sql.Deployer.Process
 {
 	[TestClass]
-	public sealed class SqlCommandWrapperTests : BaseUnitTest<SqlCommandWrapperThens>
+	public sealed class SqlCommandWrapperTests : UnitTestBase<SqlCommandWrapperThens>
 	{
 		protected override void OnTeardown()
 		{
@@ -40,7 +40,7 @@ namespace Randal.Tests.Sql.Deployer.Process
 		public void ShouldThrowException_WhenExecuting_GivenNoSqlServer()
 		{
 			Given.Database = "master";
-			ThrowsExceptionWhen(ExecutingCommand);
+			WhenLastActionDeferred(ExecutingCommand);
 			ThenLastAction.ShouldThrow<InvalidOperationException>().WithMessage("Invalid operation. The connection is closed.");
 		}
 

@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,9 @@
 // GNU General Public License for more details.
 
 using System;
+using System.Fakes;
 using FluentAssertions;
+using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Randal.Core.Testing.UnitTest;
 using Randal.Logging;
@@ -20,25 +22,25 @@ using Randal.Logging;
 namespace Randal.Tests.Logging
 {
 	[TestClass]
-	public sealed class StringLoggerTests : BaseUnitTest<StringLoggerThens>
+	public sealed class StringLoggerTests : UnitTestBase<StringLoggerThens>
 	{
 		[TestMethod]
 		public void ShouldHaveValidLoggerWhenCreating()
 		{
 			When(Creating);
 
-			Then.Logger.Should().NotBeNull().And.BeAssignableTo<ILogger>();
+			Then.Logger.Should().NotBeNull().And.BeAssignableTo<ILogSink>();
 			Then.Logger.VerbosityThreshold.Should().Be(Verbosity.All);
 		}
 
 		[TestMethod]
 		public void ShouldHaveSameTextWhenGettingTextGivenValue()
 		{
-			Given.Entry = new LogEntry("Hello world", new DateTime(2014, 6, 11));
+			Given.Entry = Entry("Hello world");
 
 			When(AddingEntry, GettingText);
 
-			Then.Text.Should().Be("140611 000000    Hello world\r\n");
+			Then.Text.Should().Be("151216 000000    Hello world\r\n");
 		}
 
 		[TestMethod]
@@ -54,16 +56,16 @@ namespace Randal.Tests.Logging
 		[TestMethod]
 		public void ShouldHaveLoggedTextAvailableWhenGettingTextGivenDisposedLogger()
 		{
-			Given.Entry = new LogEntry("Nothing is ever truly lost", new DateTime(2014, 6, 11));
+			Given.Entry = Entry("Nothing is ever truly lost");
 
 			When(AddingEntry, Disposing, GettingText);
 
-			Then.Text.Should().Be("140611 000000    Nothing is ever truly lost\r\n");
+			Then.Text.Should().Be("151216 000000    Nothing is ever truly lost\r\n");
 		}
 
 		protected override void Creating()
 		{
-			Then.Logger = new StringLogger();
+			Then.Logger = new StringLogSink();
 		}
 
 		private void Disposing()
@@ -79,18 +81,27 @@ namespace Randal.Tests.Logging
 
 		private void AddingEntry()
 		{
-			Then.Logger.Add(Given.Entry);
+			Then.Logger.Post(Given.Entry);
 		}
 
 		private void GettingText()
 		{
 			Then.Text = Then.Logger.GetLatestText();
 		}
+
+		private static LogEntry Entry(string message)
+		{
+			using (ShimsContext.Create())
+			{
+				ShimDateTime.NowGet = () => new DateTime(2015, 12, 16, 0, 0, 0);
+				return new LogEntry(message);
+			}
+		}
 	}
 
 	public sealed class StringLoggerThens : IDisposable
 	{
-		public StringLogger Logger;
+		public StringLogSink Logger;
 		public string Text;
 		public Verbosity Verbosity;
 

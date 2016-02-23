@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ using Randal.Sql.Deployer.Scripts;
 namespace Randal.Tests.Sql.Deployer.Scripts
 {
 	[TestClass]
-	public sealed class ScriptCheckerTests : BaseUnitTest<ScriptCheckThens>
+	public sealed class ScriptCheckerTests : UnitTestBase<ScriptCheckThens>
 	{
 		[TestMethod, PositiveTest]
 		public void ShouldHaveValidChecker_WhenCreating()
@@ -90,8 +90,8 @@ namespace Randal.Tests.Sql.Deployer.Scripts
 
 		private void Validating()
 		{
-			IEnumerable<string> messages;
-			Then.Validation = Then.Target.Validate(Given.Script, out messages);
+			var messages = new List<string>();
+			Then.Validation = Then.Target.Validate(Given.Script, messages);
 			Then.Messages = messages;
 		}
 	}

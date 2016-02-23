@@ -1,5 +1,5 @@
 ﻿// Useful C#
-// Copyright (C) 2014 Nicholas Randal
+// Copyright (C) 2014-2016 Nicholas Randal
 // 
 // Useful C# is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ using Randal.Sql.Deployer.Scripts.Blocks;
 namespace Randal.Tests.Sql.Deployer.Scripts
 {
 	[TestClass]
-	public sealed class SourceScriptTests : BaseUnitTest<SourceScriptThens>
+	public sealed class SourceScriptTests : UnitTestBase<SourceScriptThens>
 	{
 		protected override void OnSetup()
 		{
@@ -150,7 +150,7 @@ namespace Randal.Tests.Sql.Deployer.Scripts
 		{
 			Given.Name = null;
 
-			ThrowsExceptionWhen(Creating);
+			WhenLastActionDeferred(Creating);
 
 			ThenLastAction.ShouldThrow<ArgumentNullException>();
 		}
@@ -182,7 +182,7 @@ namespace Randal.Tests.Sql.Deployer.Scripts
 		{
 			Given.RequestedPhase = SqlScriptPhase.Main;
 
-			ThrowsExceptionWhen(Validating, RequestingPhase);
+			WhenLastActionDeferred(Validating, RequestingPhase);
 
 			ThenLastAction.ShouldThrow<InvalidOperationException>();
 		}
@@ -219,7 +219,9 @@ namespace Randal.Tests.Sql.Deployer.Scripts
 
 		private void Validating()
 		{
-			Then.Messages = Then.Script.Validate();
+			var messages = new List<string>();
+			Then.Script.Validate(messages);
+			Then.Messages = messages;
 		}
 
 		protected override void Creating()
