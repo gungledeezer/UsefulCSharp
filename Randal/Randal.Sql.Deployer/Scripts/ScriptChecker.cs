@@ -63,22 +63,20 @@ namespace Randal.Sql.Deployer.Scripts
 
 				foreach (Match match in matches)
 				{
-					string text;
-					int line;
-					lastIndex = FindTextLocation(input, lastIndex, match.Value, out line, out text);
-					tempMessages.Add(string.Format("{0}: Line {1}, found \"{2}\".", filter.Item2, line, text));
+					lastIndex = FindTextLocation(input, lastIndex, match.Value, out var line, out var text);
+					tempMessages.Add($"{filter.Item2}: Line {line}, found \"{text}\".");
 				}
 			}
 
 			return validationState;
 		}
 
-		private static int FindTextLocation(string orignalInput, int lastIndex, string match, out int line, out string text)
+		private static int FindTextLocation(string originalInput, int lastIndex, string match, out int line, out string text)
 		{
 			if (lastIndex < 0)
 				lastIndex = 0;
 
-			lastIndex = orignalInput.IndexOf(match, lastIndex, StringComparison.InvariantCulture);
+			lastIndex = originalInput.IndexOf(match, lastIndex, StringComparison.InvariantCulture);
 			if (lastIndex == -1)
 			{
 				text = "<failed to find text>";
@@ -86,10 +84,10 @@ namespace Randal.Sql.Deployer.Scripts
 				return -1;
 			}
 
-			line = orignalInput.Substring(0, lastIndex).Count(c => c == '\n') + 1;
+			line = originalInput.Substring(0, lastIndex).Count(c => c == '\n') + 1;
 
 			text = new string(
-				orignalInput
+				originalInput
 					.Skip(lastIndex)
 					.Take(40)
 					.Select(c => c == '\r' || c == '\n' ? ' ' : c)

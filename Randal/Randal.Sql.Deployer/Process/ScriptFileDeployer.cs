@@ -29,7 +29,7 @@ namespace Randal.Sql.Deployer.Process
 			: base(config, project)
 		{
 			if (project == null)
-				throw new ArgumentNullException("project");
+				throw new ArgumentNullException(nameof(project));
 
 			_connectionManager = connectionManager;
 			_logger = logger ?? new NullLogger();

@@ -25,7 +25,7 @@ namespace Randal.Sql.Deployer.Scripts
 		public SourceScript(string name, IEnumerable<IScriptBlock> blocks)
 		{
 			if (name == null)
-				throw new ArgumentNullException("name");
+				throw new ArgumentNullException(nameof(name));
 
 			IsValid = false;
 			Name = name;

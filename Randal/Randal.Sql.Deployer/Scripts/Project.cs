@@ -28,9 +28,9 @@ namespace Randal.Sql.Deployer.Scripts
 		public Project(IProjectConfig config, IEnumerable<SourceScript> scripts)
 		{
 			if (config == null)
-				throw new ArgumentNullException("config");
+				throw new ArgumentNullException(nameof(config));
 			if (scripts == null)
-				throw new ArgumentNullException("scripts");
+				throw new ArgumentNullException(nameof(scripts));
 
 			var allScripts = scripts.ToList();
 

@@ -26,11 +26,8 @@ namespace Randal.Sql.Deployer.UI
 {
 	public sealed class ViewModel : INotifyPropertyChanged
 	{
-		private readonly IWindowWrapper _windowWrapper;
-
 		public ViewModel(IDeploymentAppSettings appSettings, IWindowWrapper windowWrapper)
 		{
-			_windowWrapper = windowWrapper;
 			IsBusy = false;
 
 			ProjectFolder = appSettings.ProjectFolder;
@@ -49,27 +46,25 @@ namespace Randal.Sql.Deployer.UI
 
 			_projectFolderCommand = new DelegateCommand<string>(s =>
 			{
-				string selectedPath;
-				if (_windowWrapper.ShowFolderDialog("Select Project Folder", s, out selectedPath))
+				if (windowWrapper.ShowFolderDialog("Select Project Folder", s, out var selectedPath))
 					ProjectFolder = selectedPath;
 			}, s => IsAvailable);
 
 			_logFolderCommand = new DelegateCommand<string>(s =>
 			{
-				string selectedPath;
-				if (_windowWrapper.ShowFolderDialog("Select Log Folder", s, out selectedPath))
+				if (windowWrapper.ShowFolderDialog("Select Log Folder", s, out var selectedPath))
 					LogFolder = selectedPath;
 
 			}, s => IsAvailable);
 		}
 
-		public DelegateCommand<string> ProjectFolderSelectCommand { get { return _projectFolderCommand; } }
+		public DelegateCommand<string> ProjectFolderSelectCommand => _projectFolderCommand;
 
-		public DelegateCommand<string> LogFolderSelectCommand { get { return _logFolderCommand; } }
+		public DelegateCommand<string> LogFolderSelectCommand => _logFolderCommand;
 
 		public bool IsBusy
 		{
-			get { return _isBusy; }
+			get => _isBusy;
 			set
 			{
 				if (_isBusy == value)
@@ -80,14 +75,11 @@ namespace Randal.Sql.Deployer.UI
 			}
 		}
 
-		public bool IsAvailable
-		{
-			get { return !_isBusy; }
-		}
+		public bool IsAvailable => !_isBusy;
 
 		public List<ComboBoxItem> ServersList
 		{
-			get { return _serversList; }
+			get => _serversList;
 			set
 			{
 				if (value == null)
@@ -100,7 +92,7 @@ namespace Randal.Sql.Deployer.UI
 
 		public string ProjectFolder
 		{
-			get { return _projectFolder; }
+			get => _projectFolder;
 			set
 			{
 				if (_projectFolder == value)
@@ -113,7 +105,7 @@ namespace Randal.Sql.Deployer.UI
 
 		public string LogFolder
 		{
-			get { return _logFolder; }
+			get => _logFolder;
 			set
 			{
 				if (_logFolder == value)
@@ -126,7 +118,7 @@ namespace Randal.Sql.Deployer.UI
 
 		public string SqlServer
 		{
-			get { return _sqlServer; }
+			get => _sqlServer;
 			set
 			{
 				if (_sqlServer == value)
@@ -139,7 +131,7 @@ namespace Randal.Sql.Deployer.UI
 
 		public bool NoTransaction
 		{
-			get { return _noTransaction; }
+			get => _noTransaction;
 			set
 			{
 				if (_noTransaction == value)
@@ -155,7 +147,7 @@ namespace Randal.Sql.Deployer.UI
 
 		public bool ForceRollback
 		{
-			get { return _forceRollback; }
+			get => _forceRollback;
 			set
 			{
 				if (_forceRollback == value)
@@ -174,7 +166,7 @@ namespace Randal.Sql.Deployer.UI
 
 		public bool CheckFilesOnly
 		{
-			get { return _checkFilesOnly; }
+			get => _checkFilesOnly;
 			set
 			{
 				if (_checkFilesOnly == value)
@@ -194,7 +186,7 @@ namespace Randal.Sql.Deployer.UI
 
 		public bool BypassCheck
 		{
-			get { return _bypassCheck; }
+			get => _bypassCheck;
 			set
 			{
 				if (_bypassCheck == value)

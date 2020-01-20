@@ -58,7 +58,7 @@ namespace Randal.Sql.Deployer.Process
 		public void Execute(string databaseName, int timeout = 30)
 		{
 			if (databaseName == null)
-				throw new ArgumentNullException("databaseName");
+				throw new ArgumentNullException(nameof(databaseName));
 
 			if (timeout <= 0)
 				timeout = 30;
@@ -71,7 +71,7 @@ namespace Randal.Sql.Deployer.Process
 		public SqlDataReader ExecuteReader(string databaseName, int timeout = 30)
 		{
 			if (databaseName == null)
-				throw new ArgumentNullException("databaseName");
+				throw new ArgumentNullException(nameof(databaseName));
 
 			if (timeout <= 0)
 				timeout = 30;

@@ -28,10 +28,7 @@ namespace Randal.Sql.Deployer.App
 	{
 		public Runner(IRunnerSettings settings, ILogger logger = null)
 		{
-			if (settings == null)
-				throw new ArgumentNullException("settings");
-
-			_settings = settings;
+			_settings = settings ?? throw new ArgumentNullException(nameof(settings));
 			_logger = logger ?? new NullLogger();
 			var configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
 
