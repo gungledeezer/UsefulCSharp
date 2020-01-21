@@ -19,19 +19,37 @@ namespace Randal.Sql.Deployer.App
 	public interface IRunnerSettings
 	{
 		IRollingFileSettings FileLoggerSettings { get; }
+
 		string ScriptProjectFolder { get; }
+
 		string Server { get; }
+
+		bool HasUnifiedScriptPath { get; }
+
+		string UnifiedScriptPath { get; }
+
 		bool NoTransaction { get; }
+
 		bool UseTransaction { get; }
+
 		bool ShouldRollback { get; }
+
 		bool CheckFilesOnly { get; }
+
 		bool BypassCheck { get; }
 	}
 
 	public sealed class RunnerSettings : IRunnerSettings
 	{
-		public RunnerSettings(string scriptProjectFolder, string logFolder, string server, 
-			bool rollback = false, bool noTransaction = false, bool checkFilesOnly = false, bool bypassCheck = false)
+		public RunnerSettings(
+			string scriptProjectFolder, 
+			string logFolder, 
+			string server, 
+			string unifiedScriptPath,
+			bool rollback = false, 
+			bool noTransaction = false, 
+			bool checkFilesOnly = false, 
+			bool bypassCheck = false)
 		{
 			if(checkFilesOnly && bypassCheck)
 				throw new ArgumentException("bypassCheck and checkFilesOnly cannot both be true.", nameof(bypassCheck));
@@ -39,34 +57,35 @@ namespace Randal.Sql.Deployer.App
 			if(checkFilesOnly && (noTransaction || rollback == false))
 				throw new ArgumentException("When 'checkFilesOnly' is True, then 'noTran' must be False and 'rollback' must be True.", nameof(checkFilesOnly));
 
-			_scriptProjectFolder = scriptProjectFolder;
-			_server = server;
-			_noTransaction = noTransaction;
-			_rollback = rollback;
-			_checkFilesOnly = checkFilesOnly;
-			_bypassCheck = bypassCheck;
+			ScriptProjectFolder = scriptProjectFolder;
+			Server = server;
+			UnifiedScriptPath = unifiedScriptPath;
+			NoTransaction = noTransaction;
+			ShouldRollback = rollback;
+			CheckFilesOnly = checkFilesOnly;
+			BypassCheck = bypassCheck;
 
-			_fileLoggerSettings = new RollingFileSettings(logFolder, "SqlScriptDeployer");
+			FileLoggerSettings = new RollingFileSettings(logFolder, "SqlScriptDeployer");
 		}
 
-		public IRollingFileSettings FileLoggerSettings { get { return _fileLoggerSettings; } }
+		public IRollingFileSettings FileLoggerSettings { get; }
 
-		public string ScriptProjectFolder { get { return _scriptProjectFolder; } }
+		public string ScriptProjectFolder { get; }
 
-		public string Server { get { return _server; } }
+		public string Server { get; }
 
-		public bool NoTransaction { get { return _noTransaction; } }
+		public string UnifiedScriptPath { get; }
 
-		public bool UseTransaction { get { return _noTransaction == false; } }
+		public bool HasUnifiedScriptPath => string.IsNullOrWhiteSpace(UnifiedScriptPath) == false;
 
-		public bool ShouldRollback { get { return _rollback; } }
+		public bool NoTransaction { get; }
 
-		public bool CheckFilesOnly { get { return _checkFilesOnly; } }
+		public bool UseTransaction => NoTransaction == false;
 
-		public bool BypassCheck { get { return _bypassCheck; } }
+		public bool ShouldRollback { get; }
 
-		private readonly bool _noTransaction, _checkFilesOnly, _rollback, _bypassCheck;
-		private readonly IRollingFileSettings _fileLoggerSettings;
-		private readonly string _scriptProjectFolder, _server;
+		public bool CheckFilesOnly { get; }
+
+		public bool BypassCheck { get; }
 	}
 }

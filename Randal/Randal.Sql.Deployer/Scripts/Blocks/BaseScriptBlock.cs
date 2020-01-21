@@ -33,14 +33,14 @@ namespace Randal.Sql.Deployer.Scripts.Blocks
 
 		public string Text
 		{
-			get { return _text; }
-			protected set { _text = (value ?? string.Empty).Trim(); }
+			get => _text;
+			protected set => _text = (value ?? string.Empty).Trim();
 		}
 
 		public string Keyword
 		{
-			get { return _keyword; }
-			protected set { _keyword = (value ?? string.Empty).Trim(); }
+			get => _keyword;
+			private set => _keyword = (value ?? string.Empty).Trim();
 		}
 
 		public bool IsValid { get; protected set; }

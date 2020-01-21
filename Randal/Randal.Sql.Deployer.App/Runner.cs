@@ -40,7 +40,7 @@ namespace Randal.Sql.Deployer.App
 		{
 			var commit = false;
 
-			using (var connectionManager = new SqlConnectionManager(_config.DatabaseLookup))
+			using (var connectionManager = CreateSqlConnectionManager())
 			{
 				RunnerResolution resolution;
 
@@ -62,7 +62,7 @@ namespace Randal.Sql.Deployer.App
 					if (_settings.CheckFilesOnly)
 						return RunnerResolution.ValidationOnly;
 
-					DeployScripts(_config, project, connectionManager);
+					DeployScripts(_settings, _config, project, connectionManager);
 
 					commit = _settings.ShouldRollback == false;
 				}
@@ -84,6 +84,13 @@ namespace Randal.Sql.Deployer.App
 
 				return resolution;
 			}
+		}
+
+		private ISqlConnectionManager CreateSqlConnectionManager()
+		{
+			return _settings.HasUnifiedScriptPath 
+				? (ISqlConnectionManager)new DummySqlConnectionManager() 
+				: new SqlConnectionManager(_config.DatabaseLookup);
 		}
 
 		private RunnerResolution ResolveTransaction(bool commit, ISqlConnectionManager connectionManager)
@@ -108,6 +115,7 @@ namespace Randal.Sql.Deployer.App
 			_logger.PostEntryNoTimestamp("server . . . . . . :  {0}", _settings.Server);
 			_logger.PostEntryNoTimestamp("project folder . . :  {0}", _settings.ScriptProjectFolder);
 			_logger.PostEntryNoTimestamp("log folder . . . . :  {0}", _settings.FileLoggerSettings.BasePath);
+			_logger.PostEntryNoTimestamp("unified script path:  {0}", _settings.UnifiedScriptPath);
 			_logger.PostEntryNoTimestamp("use transaction  . :  {0}", _settings.UseTransaction);
 			_logger.PostEntryNoTimestamp("rollback trans . . :  {0}", _settings.ShouldRollback);
 			_logger.PostEntryNoTimestamp("check scripts only :  {0}", _settings.CheckFilesOnly);
@@ -154,9 +162,9 @@ namespace Randal.Sql.Deployer.App
 			return new Project(loader.Configuration, loader.AllScripts);
 		}
 
-		private void DeployScripts(IScriptDeployerConfig config, IProject project, ISqlConnectionManager connectionManager)
+		private void DeployScripts(IRunnerSettings settings, IScriptDeployerConfig config, IProject project, ISqlConnectionManager connectionManager)
 		{
-			using(var deployer = new SqlServerDeployer(config, project, connectionManager, _logger))
+			using (var deployer = GetDeployer(settings, config, project, connectionManager))
 			{
 				if (deployer.CanProceed() == false)
 					throw new RunnerException("Cannot proceed! A more recent version has already been deployed.", RunnerResolution.StaleDeployment);
@@ -164,6 +172,13 @@ namespace Randal.Sql.Deployer.App
 				if (deployer.DeployScripts() == Returned.Failure)
 					throw new RunnerException("Deploy scripts failed.");
 			}
+		}
+
+		private IScriptDeployer GetDeployer(IRunnerSettings settings, IScriptDeployerConfig config, IProject project, ISqlConnectionManager connectionManager)
+		{
+			return settings.HasUnifiedScriptPath 
+				? (IScriptDeployer)new ScriptFileDeployer(settings.UnifiedScriptPath, config, project, _logger) 
+				: new SqlServerDeployer(config, project, connectionManager, _logger);
 		}
 
 		private readonly ILoggerSync _logger;

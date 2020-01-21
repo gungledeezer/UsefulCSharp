@@ -118,11 +118,9 @@ namespace Randal.Sql.Deployer.Process
 		{
 			try
 			{
-				if (_connection != null)
-					_connection.Dispose();
+				_connection?.Dispose();
 
-				if (_transaction != null)
-					_transaction.Dispose();
+				_transaction?.Dispose();
 			}
 			catch (SqlException)
 			{

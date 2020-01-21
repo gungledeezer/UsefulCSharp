@@ -25,18 +25,26 @@ namespace Randal.Sql.Deployer.Process
 {
 	public sealed class ScriptFileDeployer : ScriptDeployerBase
 	{
-		public ScriptFileDeployer(IScriptDeployerConfig config, IProject project, ISqlConnectionManager connectionManager, ILogger logger)
+		public ScriptFileDeployer(string path, IScriptDeployerConfig config, IProject project, ILoggerSync logger)
 			: base(config, project)
 		{
+			string GetFileName()
+			{
+				return $"{project.Configuration.Project}_v{project.Configuration.Version.Replace('.', '-')}.sql";
+			}
+
 			if (project == null)
 				throw new ArgumentNullException(nameof(project));
 
-			_connectionManager = connectionManager;
 			_logger = logger ?? new NullLogger();
 			_patternLookup = new CatalogPatternLookup();
 
-			var fileName = string.Format("{0}_{1}_v{2}.sql", connectionManager.Server, project.Configuration.Project, project.Configuration.Version.Replace('.', '-'));
-			var path = Path.Combine("G:\\", fileName);
+			path = Path.HasExtension(path)
+				? path
+				: Path.Combine(path,
+					GetFileName());
+
+			
 			_writer = new StreamWriter(File.Create(path, 16384, FileOptions.Asynchronous));
 
 			_writer.WriteLine("-- Generated {0} on {1} by {2}", DateTime.Now, Environment.MachineName, Environment.UserName);
@@ -155,20 +163,7 @@ namespace Randal.Sql.Deployer.Process
 
 		private IEnumerable<string> GetCatalogs(SourceScript script)
 		{
-			var matchingDatabases = new List<string>();
-
-			foreach (var rgx in script.GetCatalogPatterns().Select(pattern => _patternLookup[pattern]))
-			{
-				matchingDatabases.AddRange(
-					_connectionManager.DatabaseNames
-						.Where(dbName => rgx.IsMatch(dbName))
-					);
-			}
-
-			if(matchingDatabases.Count == 0)
-				throw new InvalidOperationException("No matching catalogs found for script '" + script.Name + "'. Check the 'catalog' directive.");
-
-			return matchingDatabases.Distinct().OrderBy(x => x);
+			return script.GetCatalogPatterns().Distinct().OrderBy(x => x);
 		}
 
 		private void CreateProjectsTable()
@@ -222,7 +217,6 @@ namespace Randal.Sql.Deployer.Process
 		}
 		
 		private readonly ILoggerSync _logger;
-		private readonly ISqlConnectionManager _connectionManager;
 		private readonly CatalogPatternLookup _patternLookup;
 		private readonly StreamWriter _writer;
 	}

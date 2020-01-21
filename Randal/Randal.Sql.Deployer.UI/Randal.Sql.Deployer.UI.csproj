@@ -144,8 +144,8 @@
     <Reference Include="Microsoft.SqlServer.WmiEnum, Version=15.100.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.SqlServer.SqlManagementObjects.150.18208.0\lib\net45\Microsoft.SqlServer.WmiEnum.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -179,7 +179,7 @@
     <Compile Include="ScriptDeploymentProcess.cs" />
     <Compile Include="Support\DelegateCommand.cs" />
     <Compile Include="Support\WindowExtensions.cs" />
-    <Compile Include="Support\WindowWraper.cs" />
+    <Compile Include="Support\WindowWrapper.cs" />
     <Compile Include="TextBlockExtensions.cs" />
     <Compile Include="TextBlockParser.cs" />
     <Compile Include="ViewModel.cs" />

@@ -13,7 +13,6 @@
 
 using System;
 using System.ServiceModel;
-using System.Threading.Tasks;
 using Randal.Logging;
 using Randal.Sql.Deployer.Shared;
 
@@ -95,6 +94,8 @@ namespace Randal.Sql.Deployer.App
 
 		private static AppOptions ParseCommandLineArguments(string[] args)
 		{
+			Console.WriteLine(args[0]);
+
 			var parser = new AppOptionsParser();
 			var results = parser.Parse(args);
 

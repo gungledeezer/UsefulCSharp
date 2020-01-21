@@ -23,11 +23,11 @@ namespace Randal.Sql.Deployer.UI.Support
 		bool ShowFolderDialog(string title, string path, out string selectedPath);
 	}
 
-	public sealed class WindowWraper : IWindowWrapper, System.Windows.Forms.IWin32Window
+	public sealed class WindowWrapper : IWindowWrapper, System.Windows.Forms.IWin32Window
 	{
 		private readonly Window _window;
 
-		public WindowWraper(Window window)
+		public WindowWrapper(Window window)
 		{
 			_window = window;
 		}

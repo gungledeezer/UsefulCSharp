@@ -16,7 +16,7 @@ namespace Randal.Sql.Deployer.UI.Support
 	{
 		public static IWindowWrapper CreateWrapper(this MainWindow window)
 		{
-			return new WindowWraper(window);
+			return new WindowWrapper(window);
 		}
 	}
 }
