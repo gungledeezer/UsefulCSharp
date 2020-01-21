@@ -72,8 +72,7 @@ namespace Randal.Sql.Deployer.Process
 
 		private void WriteEndTransaction()
 		{
-			_writer.WriteLine();
-			_writer.WriteLine("commit");
+			_writer.WriteLine($"{Environment.NewLine}commit{Environment.NewLine}");
 		}
 
 		public override Returned DeployScripts()
@@ -203,10 +202,10 @@ namespace Randal.Sql.Deployer.Process
 
 		private void WriteCommand(string database, string command, params object[] values)
 		{
-			_writer.WriteLine("Use " + database);
+			_writer.WriteLine($"Use {database}{Environment.NewLine}GO{Environment.NewLine}");
+			
 			_writer.WriteLine(values.Length == 0 ? command : string.Format(command, values));
-			_writer.WriteLine();
-			_writer.WriteLine();
+			_writer.WriteLine($"{Environment.NewLine}GO{Environment.NewLine}");
 		}
 
 		public override void Dispose()
